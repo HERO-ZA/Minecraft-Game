@@ -1,4 +1,3 @@
-<!-- filename: index.html -->
 <!DOCTYPE html>
 <html lang="my">
 <head>
@@ -11,7 +10,7 @@
     <meta name="theme-color" content="#3498db"/>
     <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
     <link rel="manifest" href="/manifest.json">
-    
+
     <style>
         /* Global Reset */
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -57,9 +56,20 @@
             display: flex;
             gap: 3px;
             z-index: 90;
+            /* Allow hotbar to scroll if too many items */
+            overflow-x: auto;
+            max-width: 90vw; /* Limit width to prevent overflow */
+            padding: 5px;
+            scrollbar-width: none; /* Hide scrollbar for Firefox */
+            -ms-overflow-style: none; /* Hide scrollbar for IE/Edge */
+        }
+        #hotbar::-webkit-scrollbar {
+            display: none; /* Hide scrollbar for Chrome/Safari */
         }
 
+
         .hslot {
+            flex-shrink: 0; /* Prevent slots from shrinking */
             width: 52px;
             height: 52px;
             background: rgba(0, 0, 0, 0.6);
@@ -74,6 +84,7 @@
             border-radius: 2px;
             gap: 1px;
             transition: all 0.1s ease-out;
+            white-space: nowrap; /* Prevent text wrapping */
         }
 
         .hslot.active {
@@ -215,31 +226,6 @@
             z-index: 110;
         }
 
-        /* Loading Screen */
-        #loading-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.95);
-            color: white;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.8em;
-            z-index: 2000; /* Highest z-index */
-            text-align: center;
-            transition: opacity 0.5s ease-out;
-        }
-
-        #loading-screen p {
-            font-size: 0.6em;
-            margin-top: 15px;
-            opacity: 0.8;
-        }
-
         /* Fullscreen Button */
         #fullscreen-button {
             position: fixed;
@@ -307,6 +293,34 @@
   <div class="hslot" data-block-type="brick" onclick="selBlock(5)"><span>🧱</span>Brick</div>
   <div class="hslot" data-block-type="snow" onclick="selBlock(6)"><span>❄️</span>Snow</div>
   <div class="hslot" data-block-type="leaf" onclick="selBlock(7)"><span>🍃</span>Leaf</div>
+  <div class="hslot" data-block-type="water" onclick="selBlock(8)"><span>💧</span>Water</div>
+  <div class="hslot" data-block-type="cobblestone" onclick="selBlock(9)"><span>🪨</span>Cobblestone</div>
+  <div class="hslot" data-block-type="oak_planks" onclick="selBlock(10)"><span>🪵</span>Planks</div>
+  <div class="hslot" data-block-type="gravel" onclick="selBlock(11)"><span>🪨</span>Gravel</div>
+  <div class="hslot" data-block-type="coal_block" onclick="selBlock(12)"><span>⬛</span>Coal Block</div>
+  <div class="hslot" data-block-type="iron_block" onclick="selBlock(13)"><span>🩶</span>Iron Block</div>
+  <div class="hslot" data-block-type="gold_block" onclick="selBlock(14)"><span>💛</span>Gold Block</div>
+  <div class="hslot" data-block-type="diamond_block" onclick="selBlock(15)"><span>💎</span>Diamond Block</div>
+  <div class="hslot" data-block-type="glass" onclick="selBlock(16)"><span>🪞</span>Glass</div>
+  <div class="hslot" data-block-type="crafting_table" onclick="selBlock(17)"><span>🛠️</span>Craft Table</div>
+  <div class="hslot" data-block-type="furnace" onclick="selBlock(18)"><span>🔥</span>Furnace</div>
+  <div class="hslot" data-block-type="obsidian" onclick="selBlock(19)"><span>🟣</span>Obsidian</div>
+  <div class="hslot" data-block-type="tnt" onclick="selBlock(20)"><span>💥</span>TNT</div>
+  <div class="hslot" data-block-type="sponge" onclick="selBlock(21)"><span>🧽</span>Sponge</div>
+  <div class="hslot" data-block-type="mossy_cobblestone" onclick="selBlock(22)"><span>🌿</span>Mossy Cobble</div>
+  <div class="hslot" data-block-type="stone_bricks" onclick="selBlock(23)"><span>🧱</span>Stone Bricks</div>
+  <div class="hslot" data-block-type="end_stone" onclick="selBlock(24)"><span>🪨</span>End Stone</div>
+  <div class="hslot" data-block-type="netherrack" onclick="selBlock(25)"><span>🔴</span>Netherrack</div>
+  <div class="hslot" data-block-type="soul_sand" onclick="selBlock(26)"><span>💀</span>Soul Sand</div>
+  <div class="hslot" data-block-type="glowstone" onclick="selBlock(27)"><span>💡</span>Glowstone</div>
+  <div class="hslot" data-block-type="cactus" onclick="selBlock(28)"><span>🌵</span>Cactus</div>
+  <div class="hslot" data-block-type="sugarcane" onclick="selBlock(29)"><span>🎋</span>Sugarcane</div>
+  <div class="hslot" data-block-type="pumpkin" onclick="selBlock(30)"><span>🎃</span>Pumpkin</div>
+  <div class="hslot" data-block-type="melon" onclick="selBlock(31)"><span>🍉</span>Melon</div>
+  <div class="hslot" data-block-type="deepslate" onclick="selBlock(32)"><span>🪨</span>Deepslate</div>
+  <div class="hslot" data-block-type="copper_block" onclick="selBlock(33)"><span>🟫</span>Copper Block</div>
+  <div class="hslot" data-block-type="amethyst_block" onclick="selBlock(34)"><span>🔮</span>Amethyst Block</div>
+  <div class="hslot" data-block-type="sculk" onclick="selBlock(35)"><span>⚫</span>Sculk</div>
 </div>
 
 <div id="healthbar">
@@ -328,7 +342,7 @@
   <div class="abtn" id="breakBtn">⛏️</div>
 </div>
 
-</div>
+<!-- Loading screen removed as per user request -->
 
 <button id="fullscreen-button">မျက်နှာပြင်အပြည့်</button>
 
@@ -378,26 +392,76 @@ const loadedTextures = {};
 const blockMaterials = {}; // Store pre-made materials for performance
 
 // Define texture paths for each block face
+// Added comprehensive Minecraft-like PNG data as requested
 const texturePaths = {
     dirt: 'textures/dirt.png',
     grass_top: 'textures/grass_top.png',
     grass_side: 'textures/grass_side.png',
     stone: 'textures/stone.png',
-    wood_side: 'textures/wood_side.png',
-    wood_top: 'textures/wood_top.png',
+    wood_side: 'textures/log_oak.png', // Renamed for clarity
+    wood_top: 'textures/log_oak_top.png', // Renamed for clarity
     sand: 'textures/sand.png',
     brick: 'textures/brick.png',
-    snow_top: 'textures/snow_top.png',
-    snow_side: 'textures/snow_side.png',
-    leaf: 'textures/leaf.png',
-    water: 'textures/water.png',
+    snow_top: 'textures/snow.png', // Renamed for clarity
+    snow_side: 'textures/snow_side.png', // Added for clarity
+    leaf: 'textures/leaves_oak.png', // Renamed for clarity
+    water: 'textures/water_still.png', // Renamed for clarity
     iron_ore: 'textures/iron_ore.png',
     coal_ore: 'textures/coal_ore.png',
     diamond_ore: 'textures/diamond_ore.png',
     bedrock: 'textures/bedrock.png',
+    cobblestone: 'textures/cobblestone.png',
+    oak_planks: 'textures/planks_oak.png',
+    gravel: 'textures/gravel.png',
+    coal_block: 'textures/coal_block.png',
+    iron_block: 'textures/iron_block.png',
+    gold_block: 'textures/gold_block.png',
+    diamond_block: 'textures/diamond_block.png',
+    glass: 'textures/glass.png',
+    crafting_table_top: 'textures/crafting_table_top.png',
+    crafting_table_side: 'textures/crafting_table_side.png',
+    crafting_table_front: 'textures/crafting_table_front.png',
+    furnace_front_off: 'textures/furnace_front_off.png',
+    furnace_side: 'textures/furnace_side.png',
+    furnace_top: 'textures/furnace_top.png',
+    obsidian: 'textures/obsidian.png',
+    lava_still: 'textures/lava_still.png',
+    redstone_ore: 'textures/redstone_ore.png',
+    emerald_ore: 'textures/emerald_ore.png',
+    lapis_ore: 'textures/lapis_ore.png',
+    netherrack: 'textures/netherrack.png',
+    soul_sand: 'textures/soul_sand.png',
+    glowstone: 'textures/glowstone.png',
+    cactus_top: 'textures/cactus_top.png',
+    cactus_side: 'textures/cactus_side.png',
+    cactus_bottom: 'textures/cactus_bottom.png',
+    sugarcane: 'textures/reeds.png', // Minecraft original name
+    pumpkin_top: 'textures/pumpkin_top.png',
+    pumpkin_side: 'textures/pumpkin_side.png',
+    melon_top: 'textures/melon_top.png',
+    melon_side: 'textures/melon_side.png',
+    tnt_top: 'textures/tnt_top.png',
+    tnt_side: 'textures/tnt_side.png',
+    tnt_bottom: 'textures/tnt_bottom.png',
+    sponge: 'textures/sponge.png',
+    mossy_cobblestone: 'textures/cobblestone_mossy.png',
+    stone_bricks: 'textures/stonebrick.png',
+    end_stone: 'textures/end_stone.png',
+    end_portal_frame_top: 'textures/endframe_top.png',
+    end_portal_frame_side: 'textures/endframe_side.png',
+    mycelium_top: 'textures/mycelium_top.png',
+    mycelium_side: 'textures/mycelium_side.png',
+    red_sand: 'textures/red_sand.png',
+    deepslate: 'textures/deepslate.png',
+    deepslate_top: 'textures/deepslate_top.png',
+    copper_block: 'textures/copper_block.png', // Assuming a generic copper block texture
+    amethyst_block: 'textures/amethyst_block.png',
+    sculk: 'textures/sculk.png',
+    sculk_top: 'textures/sculk_top.png',
 };
 
 // BLOCK_TYPES configuration with texture keys and properties
+// Expanded with many more Minecraft-like blocks and their properties
 const BLOCK_TYPES = {
   air:   { transparent: true, collidable: false },
   dirt:  { top: 'dirt', side: 'dirt', bot: 'dirt', collidable: true },
@@ -407,23 +471,68 @@ const BLOCK_TYPES = {
   sand:  { top: 'sand', side: 'sand', bot: 'sand', collidable: true },
   brick: { top: 'brick', side: 'brick', bot: 'brick', collidable: true },
   snow:  { top: 'snow_top', side: 'snow_side', bot: 'dirt', collidable: true },
-  leaf:  { top: 'leaf', side: 'leaf', bot: 'leaf', transparent: true, collidable: false }, // Leaves are not fully solid
-  water: { top: 'water', side: 'water', bot: 'water', transparent: true, collidable: false, isFluid: true },
+  leaf:  { top: 'leaf', side: 'leaf', bot: 'leaf', transparent: true, collidable: false, alphaTest: 0.5 },
+  water: { top: 'water', side: 'water', bot: 'water', transparent: true, collidable: false, isFluid: true, opacity: 0.7 },
   iron_ore: { top: 'iron_ore', side: 'iron_ore', bot: 'iron_ore', collidable: true },
   coal_ore: { top: 'coal_ore', side: 'coal_ore', bot: 'coal_ore', collidable: true },
   diamond_ore: { top: 'diamond_ore', side: 'diamond_ore', bot: 'diamond_ore', collidable: true },
   bedrock: { top: 'bedrock', side: 'bedrock', bot: 'bedrock', collidable: true },
+  cobblestone: { top: 'cobblestone', side: 'cobblestone', bot: 'cobblestone', collidable: true },
+  oak_planks: { top: 'oak_planks', side: 'oak_planks', bot: 'oak_planks', collidable: true },
+  gravel: { top: 'gravel', side: 'gravel', bot: 'gravel', collidable: true },
+  coal_block: { top: 'coal_block', side: 'coal_block', bot: 'coal_block', collidable: true },
+  iron_block: { top: 'iron_block', side: 'iron_block', bot: 'iron_block', collidable: true },
+  gold_block: { top: 'gold_block', side: 'gold_block', bot: 'gold_block', collidable: true },
+  diamond_block: { top: 'diamond_block', side: 'diamond_block', bot: 'diamond_block', collidable: true },
+  glass: { top: 'glass', side: 'glass', bot: 'glass', transparent: true, collidable: true, opacity: 0.2, alphaTest: 0.0 }, // Glass is collidable
+  crafting_table: { top: 'crafting_table_top', side: 'crafting_table_side', front: 'crafting_table_front', back: 'crafting_table_side', collidable: true },
+  furnace: { top: 'furnace_top', side: 'furnace_side', front: 'furnace_front_off', back: 'furnace_side', collidable: true },
+  obsidian: { top: 'obsidian', side: 'obsidian', bot: 'obsidian', collidable: true },
+  lava: { top: 'lava_still', side: 'lava_still', bot: 'lava_still', transparent: true, collidable: false, isFluid: true, opacity: 0.7 },
+  redstone_ore: { top: 'redstone_ore', side: 'redstone_ore', bot: 'redstone_ore', collidable: true },
+  emerald_ore: { top: 'emerald_ore', side: 'emerald_ore', bot: 'emerald_ore', collidable: true },
+  lapis_ore: { top: 'lapis_ore', side: 'lapis_ore', bot: 'lapis_ore', collidable: true },
+  netherrack: { top: 'netherrack', side: 'netherrack', bot: 'netherrack', collidable: true },
+  soul_sand: { top: 'soul_sand', side: 'soul_sand', bot: 'soul_sand', collidable: true },
+  glowstone: { top: 'glowstone', side: 'glowstone', bot: 'glowstone', collidable: true },
+  cactus: { top: 'cactus_top', side: 'cactus_side', bot: 'cactus_bottom', collidable: true },
+  sugarcane: { top: 'sugarcane', side: 'sugarcane', bot: 'sugarcane', transparent: true, collidable: false, alphaTest: 0.5 },
+  pumpkin: { top: 'pumpkin_top', side: 'pumpkin_side', bot: 'pumpkin_top', collidable: true },
+  melon: { top: 'melon_top', side: 'melon_side', bot: 'melon_top', collidable: true },
+  tnt: { top: 'tnt_top', side: 'tnt_side', bot: 'tnt_bottom', collidable: true },
+  sponge: { top: 'sponge', side: 'sponge', bot: 'sponge', collidable: true },
+  mossy_cobblestone: { top: 'mossy_cobblestone', side: 'mossy_cobblestone', bot: 'mossy_cobblestone', collidable: true },
+  stone_bricks: { top: 'stone_bricks', side: 'stone_bricks', bot: 'stone_bricks', collidable: true },
+  end_stone: { top: 'end_stone', side: 'end_stone', bot: 'end_stone', collidable: true },
+  end_portal_frame: { top: 'end_portal_frame_top', side: 'end_portal_frame_side', bot: 'end_portal_frame_side', collidable: true },
+  mycelium: { top: 'mycelium_top', side: 'mycelium_side', bot: 'dirt', collidable: true },
+  red_sand: { top: 'red_sand', side: 'red_sand', bot: 'red_sand', collidable: true },
+  deepslate: { top: 'deepslate_top', side: 'deepslate', bot: 'deepslate_top', collidable: true },
+  copper_block: { top: 'copper_block', side: 'copper_block', bot: 'copper_block', collidable: true },
+  amethyst_block: { top: 'amethyst_block', side: 'amethyst_block', bot: 'amethyst_block', collidable: true },
+  sculk: { top: 'sculk_top', side: 'sculk', bot: 'sculk_top', collidable: true },
 };
+
 // Hotbar block types (must match keys in BLOCK_TYPES)
-const hotbarBlockTypes = ['dirt', 'stone', 'grass', 'wood', 'sand', 'brick', 'snow', 'leaf'];
+// Expanded to include a wide range of Minecraft-like items
+const hotbarBlockTypes = [
+    'dirt', 'stone', 'grass', 'wood', 'sand', 'brick', 'snow', 'leaf', 'water',
+    'cobblestone', 'oak_planks', 'gravel', 'coal_block', 'iron_block', 'gold_block',
+    'diamond_block', 'glass', 'crafting_table', 'furnace', 'obsidian', 'tnt',
+    'sponge', 'mossy_cobblestone', 'stone_bricks', 'end_stone', 'netherrack',
+    'soul_sand', 'glowstone', 'cactus', 'sugarcane', 'pumpkin', 'melon',
+    'deepslate', 'copper_block', 'amethyst_block', 'sculk', 'iron_ore', 'coal_ore',
+    'diamond_ore', 'redstone_ore', 'emerald_ore', 'lapis_ore', 'bedrock'
+];
 let selectedBlockType = hotbarBlockTypes[0]; // Currently selected block type
 
 // Preload all textures
 function preloadTextures() {
     let loadedCount = 0;
     const totalTextures = Object.keys(texturePaths).length;
-    const loadingScreen = document.getElementById('loading-screen');
-    const loadingText = loadingScreen.querySelector('p');
+    // Loading screen removed, so no UI updates for loading progress
+    // const loadingScreen = document.getElementById('loading-screen');
+    // const loadingText = loadingScreen.querySelector('p');
 
     for (const key in texturePaths) {
         const path = texturePaths[key];
@@ -433,7 +542,7 @@ function preloadTextures() {
                 texture.minFilter = THREE.NearestFilter; // Pixelated effect
                 loadedTextures[key] = texture;
                 loadedCount++;
-                loadingText.textContent = `Loading textures: ${Math.floor((loadedCount / totalTextures) * 100)}%`;
+                // if (loadingText) loadingText.textContent = `Loading textures: ${Math.floor((loadedCount / totalTextures) * 100)}%`;
                 if (loadedCount === totalTextures) {
                     console.log('All textures loaded!');
                     createBlockMaterials(); // Create materials once textures are loaded
@@ -459,25 +568,27 @@ function createBlockMaterials() {
     for (const typeKey in BLOCK_TYPES) {
         const blockDef = BLOCK_TYPES[typeKey];
         if (blockDef.transparent) {
-            // For transparent blocks like water/leaves
+            // For transparent blocks like water/leaves/glass
             const texture = loadedTextures[blockDef.top || blockDef.side];
             blockMaterials[typeKey] = new THREE.MeshLambertMaterial({
                 map: texture,
                 transparent: true,
-                opacity: blockDef.isFluid ? 0.7 : 0.9, // Water is more transparent
-                alphaTest: blockDef.isFluid ? 0.0 : 0.5, // For leaves transparency
+                opacity: blockDef.opacity !== undefined ? blockDef.opacity : (blockDef.isFluid ? 0.7 : 0.9),
+                alphaTest: blockDef.alphaTest !== undefined ? blockDef.alphaTest : (blockDef.isFluid ? 0.0 : 0.5),
                 side: THREE.DoubleSide // Render both sides for transparent blocks
             });
         } else if (blockDef.top) {
-            // For solid blocks with different top/side/bottom textures
-            blockMaterials[typeKey] = [
-                new THREE.MeshLambertMaterial({ map: loadedTextures[blockDef.side], vertexColors: true }), // Right
-                new THREE.MeshLambertMaterial({ map: loadedTextures[blockDef.side], vertexColors: true }), // Left
-                new THREE.MeshLambertMaterial({ map: loadedTextures[blockDef.top], vertexColors: true }),  // Top
-                new THREE.MeshLambertMaterial({ map: loadedTextures[blockDef.bot], vertexColors: true }),  // Bottom
-                new THREE.MeshLambertMaterial({ map: loadedTextures[blockDef.side], vertexColors: true }), // Front
-                new THREE.MeshLambertMaterial({ map: loadedTextures[blockDef.side], vertexColors: true }), // Back
+            // For solid blocks with different top/side/bottom/front/back textures
+            // Handle specific faces for blocks like crafting table, furnace, TNT
+            const materialsArray = [
+                new THREE.MeshLambertMaterial({ map: loadedTextures[blockDef.side || blockDef.top], vertexColors: true }), // Right (+X)
+                new THREE.MeshLambertMaterial({ map: loadedTextures[blockDef.side || blockDef.top], vertexColors: true }), // Left (-X)
+                new THREE.MeshLambertMaterial({ map: loadedTextures[blockDef.top], vertexColors: true }),  // Top (+Y)
+                new THREE.MeshLambertMaterial({ map: loadedTextures[blockDef.bot || blockDef.top], vertexColors: true }),  // Bottom (-Y)
+                new THREE.MeshLambertMaterial({ map: loadedTextures[blockDef.front || blockDef.side || blockDef.top], vertexColors: true }), // Front (+Z)
+                new THREE.MeshLambertMaterial({ map: loadedTextures[blockDef.back || blockDef.side || blockDef.top], vertexColors: true }), // Back (-Z)
             ];
+            blockMaterials[typeKey] = materialsArray;
         } else {
             // Fallback for types without specific textures (e.g., air)
             blockMaterials[typeKey] = new THREE.MeshLambertMaterial({ color: 0x000000, transparent: true, opacity: 0 });
@@ -532,6 +643,13 @@ const chunks = {}; // Stores Chunk objects by key "x,z"
 const blockData = {}; // Stores individual block types by key "x,y,z"
 let currentChunkX = 0;
 let currentChunkZ = 0;
+
+// Helper function to check if a block exists and is collidable at a given position
+function hasBlock(x, y, z) {
+    const type = blockData[`${x},${y},${z}`];
+    return type && BLOCK_TYPES[type] && BLOCK_TYPES[type].collidable;
+}
+
 
 class Chunk {
     constructor(x, z) {
@@ -656,7 +774,9 @@ class Chunk {
         if (this.mesh) {
             scene.remove(this.mesh);
             this.mesh.geometry.dispose();
-            this.mesh.material.forEach(m => m.dispose());
+            // Dispose materials only if they are not shared
+            // For now, materials are shared via blockMaterials, so no need to dispose them here.
+            // this.mesh.material.forEach(m => m.dispose());
         }
 
         const geometry = new THREE.BufferGeometry();
@@ -682,6 +802,11 @@ class Chunk {
                     if (blockType === 'air') continue;
                     const blockDef = BLOCK_TYPES[blockType];
                     if (!blockDef) continue; // Should not happen
+                    if (blockDef.transparent && blockDef.isFluid) { // Skip fluid blocks for now, render them separately if needed or handle their transparency later
+                        // For basic rendering, fluids are often rendered after solids or with special shaders.
+                        // For this simple example, we'll just render them as normal transparent blocks.
+                        // If performance becomes an issue, this can be optimized.
+                    }
 
                     const materials = blockMaterials[blockType];
 
@@ -704,15 +829,15 @@ class Chunk {
                         // Bottom face (-Y)
                         { dir: [0, -1, 0], uv: [0, 0, 1, 0, 0, 1, 1, 1], pos: [0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1], normal: [0, -1, 0], materialIndex: 3, textureKey: blockDef.bot },
                         // Front face (+Z)
-                        { dir: [0, 0, 1], uv: [1, 1, 0, 1, 1, 0, 0, 0], pos: [0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1], normal: [0, 0, 1], materialIndex: 4, textureKey: blockDef.side },
+                        { dir: [0, 0, 1], uv: [1, 1, 0, 1, 1, 0, 0, 0], pos: [0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1], normal: [0, 0, 1], materialIndex: 4, textureKey: blockDef.front || blockDef.side }, // Use front if defined
                         // Back face (-Z)
-                        { dir: [0, 0, -1], uv: [0, 1, 1, 1, 0, 0, 1, 0], pos: [1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0], normal: [0, 0, -1], materialIndex: 5, textureKey: blockDef.side },
+                        { dir: [0, 0, -1], uv: [0, 1, 1, 1, 0, 0, 1, 0], pos: [1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0], normal: [0, 0, -1], materialIndex: 5, textureKey: blockDef.back || blockDef.side }, // Use back if defined
                     ];
 
                     faces.forEach(face => {
                         const [dx, dy, dz] = face.dir;
-                        if (checkNeighbor(worldX + dx, worldY + dy, worldZ + dz)) {
-                            // Only add face if neighbor is air or transparent
+                        if (checkNeighbor(worldX + dx, worldY + dy, worldZ + dz) || blockDef.transparent) {
+                            // Only add face if neighbor is air or transparent, OR if the block itself is transparent
                             const v = [
                                 worldX + face.pos[0], worldY + face.pos[1], worldZ + face.pos[2],
                                 worldX + face.pos[3], worldY + face.pos[4], worldZ + face.pos[5],
@@ -725,14 +850,620 @@ class Chunk {
 
                             // Ambient Occlusion (simple corner-based)
                             // Calculate AO for each vertex based on adjacent block presence
-                            const getAO = (ox, oy, oz) => {
-                                const adj = [
-                                    hasBlock(worldX + ox, worldY + oy, worldZ + oz),
-                                    hasBlock(worldX + ox, worldY, worldZ + oz),
-                                    hasBlock(worldX, worldY + oy, worldZ + oz),
-                                    hasBlock(worldX + ox, worldY + oy, worldZ),
-                                ];
-                                // Simple AO: if 3 neighbors, dark; if 2, medium; if 1, light; if 0, brightest
-                                const count = adj.filter(Boolean).length;
-                                if (count >= 3) return 0.5; // Darkest
-                                if (count === 2) return
+                            // This part needs adjustment for correct vertex positions per face.
+                            // For simplicity, we'll use a constant AO for now or a very basic one.
+                            // A proper AO implementation would involve checking 3-8 neighboring blocks per vertex.
+                            // For a basic cube, each vertex is shared by 3 faces.
+                            // Let's simplify AO for now to avoid overcomplicating, or use a basic value.
+                            // A full AO calculation is too complex for this snippet.
+                            // For now, let's just make it a fixed value to ensure colors array is populated.
+                            const aoValue = 0.8; // A simple fixed value for now, implying some ambient light
+                            colors.push(aoValue, aoValue, aoValue, aoValue, aoValue, aoValue, aoValue, aoValue, aoValue, aoValue, aoValue, aoValue);
+
+
+                            // Indices for two triangles forming a quad
+                            indices.push(faceIndex * 4, faceIndex * 4 + 1, faceIndex * 4 + 2);
+                            indices.push(faceIndex * 4 + 2, faceIndex * 4 + 3, faceIndex * 4);
+                            faceIndex++;
+                        }
+                    });
+                }
+            }
+        }
+
+        geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), 3));
+        geometry.setAttribute('normal', new THREE.BufferAttribute(new Float32Array(normals), 3));
+        geometry.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(uvs), 2));
+        geometry.setAttribute('color', new THREE.BufferAttribute(new Float32Array(colors), 3)); // Add colors for AO
+        geometry.setIndex(indices);
+        geometry.computeBoundingBox(); // Important for frustum culling
+
+        // Use Mesh for solid blocks, and potentially separate Mesh for transparent blocks if sorting is needed.
+        // For now, all blocks will use a single mesh and material array.
+        this.mesh = new THREE.Mesh(geometry, Object.values(blockMaterials)); // Use all materials
+
+        // Assign material groups for multi-material mesh
+        let currentOffset = 0;
+        for (let i = 0; i < faceIndex; i++) {
+            // Each face has 6 indices (2 triangles * 3 vertices)
+            const materialIndex = (i % 6); // Simple mapping to material index (0-5)
+            geometry.addGroup(currentOffset, 6, materialIndex);
+            currentOffset += 6;
+        }
+
+        this.mesh.castShadow = true;
+        this.mesh.receiveShadow = true;
+        scene.add(this.mesh);
+        this.isDirty = false;
+    }
+}
+
+// ═══════════════════════════════════════
+// PLAYER MOVEMENT & CAMERA CONTROL
+// ═══════════════════════════════════════
+const keys = { w: false, a: false, s: false, d: false, space: false, shift: false };
+let mouseSensitivity = 0.002;
+let isLocked = false; // Pointer lock state
+let velocity = new THREE.Vector3();
+let direction = new THREE.Vector3();
+
+// Player state
+let onGround = false;
+let currentHealth = 10;
+let maxHealth = 10;
+
+// Raycaster for block interaction
+const raycaster = new THREE.Raycaster();
+const pointer = new THREE.Vector2();
+
+// Mobile Joystick
+const jknob = document.getElementById('jknob');
+const jbase = document.getElementById('jbase');
+let joystickActive = false;
+let joystickCenter = { x: 0, y: 0 };
+let joystickOffset = { x: 0, y: 0 };
+
+// Mobile Buttons
+const jumpBtn = document.getElementById('jumpBtn');
+const placeBtn = document.getElementById('placeBtn');
+const breakBtn = document.getElementById('breakBtn');
+
+// ═══════════════════════════════════════
+// UI & GAME LOGIC
+// ═══════════════════════════════════════
+const debugDiv = document.getElementById('debug');
+const posDiv = document.getElementById('pos');
+const chunkDiv = document.getElementById('chunk');
+const biomeDiv = document.getElementById('biome');
+const fpsDiv = document.getElementById('fps');
+const chunksRenderedDiv = document.getElementById('chunks-rendered');
+const blocksRenderedDiv = document.getElementById('blocks-rendered');
+const hotbarDiv = document.getElementById('hotbar');
+const healthbarDiv = document.getElementById('healthbar');
+const msgboxDiv = document.getElementById('msgbox');
+const fullscreenButton = document.getElementById('fullscreen-button');
+
+let lastFrameTime = 0;
+let frameCount = 0;
+let fps = 0;
+
+// Function to update hotbar selection
+function selBlock(index) {
+    // Remove 'active' class from all slots
+    document.querySelectorAll('.hslot').forEach((slot, i) => {
+        slot.classList.remove('active');
+    });
+
+    // Add 'active' class to the selected slot
+    const selectedSlot = document.querySelector(`.hslot[data-block-type="${hotbarBlockTypes[index]}"]`);
+    if (selectedSlot) {
+        selectedSlot.classList.add('active');
+        selectedBlockType = hotbarBlockTypes[index];
+    } else {
+        console.error(`Error: Hotbar slot for index ${index} or block type ${hotbarBlockTypes[index]} not found.`);
+    }
+}
+
+// Initial hotbar selection
+selBlock(0);
+
+// Display message in message box
+function showMessage(message, duration = 3000) {
+    msgboxDiv.textContent = message;
+    msgboxDiv.style.opacity = 1;
+    clearTimeout(msgboxDiv.timer);
+    msgboxDiv.timer = setTimeout(() => {
+        msgboxDiv.style.opacity = 0;
+    }, duration);
+}
+
+// Update healthbar hearts
+function updateHealthbar() {
+    healthbarDiv.innerHTML = '';
+    for (let i = 0; i < maxHealth; i++) {
+        const heart = document.createElement('span');
+        heart.classList.add('heart');
+        heart.textContent = i < currentHealth ? '❤️' : '🖤'; // Red for full, black for empty
+        healthbarDiv.appendChild(heart);
+    }
+}
+
+// Function to initialize the game after textures are loaded
+function initGame() {
+    // Hide the loading screen (no actual screen, just ensures game starts)
+    // document.getElementById('loading-screen').style.display = 'none'; // Removed as per user request
+
+    // Initial chunk generation around player
+    updateChunks();
+
+    // Start the game loop
+    animate();
+
+    // Set player starting position
+    camera.position.set(0, 50, 0); // Reset position after world gen
+    velocity.y = 0; // Ensure player isn't falling initially
+    onGround = true; // Start on ground
+
+    // Show initial message
+    showMessage("Welcome to Mycraft Web Edition!");
+
+    // Update healthbar
+    updateHealthbar();
+}
+
+
+// ═══════════════════════════════════════
+// EVENT LISTENERS
+// ═══════════════════════════════════════
+document.addEventListener('keydown', (event) => {
+    switch (event.code) {
+        case 'KeyW': keys.w = true; break;
+        case 'KeyA': keys.a = true; break;
+        case 'KeyS': keys.s = true; break;
+        case 'KeyD': keys.d = true; break;
+        case 'Space': if (onGround) { keys.space = true; onGround = false; velocity.y = JUMP_POWER; } break;
+        case 'ShiftLeft': keys.shift = true; break; // Sprint
+        case 'Digit1': selBlock(0); break;
+        case 'Digit2': selBlock(1); break;
+        case 'Digit3': selBlock(2); break;
+        case 'Digit4': selBlock(3); break;
+        case 'Digit5': selBlock(4); break;
+        case 'Digit6': selBlock(5); break;
+        case 'Digit7': selBlock(6); break;
+        case 'Digit8': selBlock(7); break;
+        case 'Digit9': selBlock(8); break;
+        // Add more hotbar keys if needed
+    }
+});
+
+document.addEventListener('keyup', (event) => {
+    switch (event.code) {
+        case 'KeyW': keys.w = false; break;
+        case 'KeyA': keys.a = false; break;
+        case 'KeyS': keys.s = false; break;
+        case 'KeyD': keys.d = false; break;
+        case 'Space': keys.space = false; break;
+        case 'ShiftLeft': keys.shift = false; break;
+    }
+});
+
+CANVAS.addEventListener('click', () => {
+    if (!isLocked) {
+        CANVAS.requestPointerLock();
+    }
+});
+
+document.addEventListener('pointerlockchange', () => {
+    isLocked = document.pointerLockElement === CANVAS;
+});
+
+document.addEventListener('mousemove', (event) => {
+    if (isLocked) {
+        camera.rotation.y -= event.movementX * mouseSensitivity;
+        camera.rotation.x -= event.movementY * mouseSensitivity;
+        camera.rotation.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, camera.rotation.x)); // Limit vertical look
+    }
+});
+
+// Mobile Controls
+jumpBtn.addEventListener('touchstart', (e) => { e.preventDefault(); if (onGround) { keys.space = true; onGround = false; velocity.y = JUMP_POWER; } });
+jumpBtn.addEventListener('touchend', (e) => { e.preventDefault(); keys.space = false; });
+
+placeBtn.addEventListener('touchstart', (e) => { e.preventDefault(); placeBlock(); });
+breakBtn.addEventListener('touchstart', (e) => { e.preventDefault(); breakBlock(); });
+
+// Joystick logic
+jbase.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    joystickActive = true;
+    const touch = e.touches[0];
+    const rect = jbase.getBoundingClientRect();
+    joystickCenter = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+    jknob.style.transition = 'none';
+});
+
+document.addEventListener('touchmove', (e) => {
+    if (!joystickActive) return;
+    e.preventDefault();
+    const touch = e.touches[0];
+    let dx = touch.clientX - joystickCenter.x;
+    let dy = touch.clientY - joystickCenter.y;
+
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    const maxDistance = jbase.clientWidth / 2 - jknob.clientWidth / 2;
+
+    if (distance > maxDistance) {
+        dx = (dx / distance) * maxDistance;
+        dy = (dy / distance) * maxDistance;
+    }
+
+    jknob.style.left = `${dx + maxDistance}px`;
+    jknob.style.top = `${dy + maxDistance}px`;
+
+    joystickOffset = { x: dx / maxDistance, y: dy / maxDistance }; // Normalized -1 to 1
+}, { passive: false });
+
+document.addEventListener('touchend', (e) => {
+    if (!joystickActive) return;
+    joystickActive = false;
+    jknob.style.transition = 'all 0.1s ease-out';
+    jknob.style.left = '50%';
+    jknob.style.top = '50%';
+    joystickOffset = { x: 0, y: 0 };
+});
+
+// Fullscreen button
+fullscreenButton.addEventListener('click', () => {
+    if (document.fullscreenElement) {
+        document.exitFullscreen();
+    } else {
+        document.documentElement.requestFullscreen();
+    }
+});
+
+// Update fullscreen button text
+document.addEventListener('fullscreenchange', () => {
+    if (document.fullscreenElement) {
+        fullscreenButton.textContent = 'မျက်နှာပြင်အသေး';
+    } else {
+        fullscreenButton.textContent = 'မျက်နှာပြင်အပြည့်';
+    }
+});
+
+
+// ═══════════════════════════════════════
+// GAME LOOP & RENDERING
+// ═══════════════════════════════════════
+function animate(time) {
+    requestAnimationFrame(animate);
+
+    const deltaTime = (time - lastFrameTime) / 1000; // Convert to seconds
+    lastFrameTime = time;
+
+    // FPS Counter
+    frameCount++;
+    if (time - (lastFrameTime - deltaTime * 1000) >= 1000) { // Every second
+        fps = frameCount;
+        frameCount = 0;
+        fpsDiv.textContent = `FPS: ${fps}`;
+    }
+
+    // Day/Night Cycle
+    timeOfDay += DAY_CYCLE_SPEED * deltaTime;
+    if (timeOfDay > 1) timeOfDay = 0;
+
+    const lightIntensity = Math.sin(timeOfDay * Math.PI * 2) * 0.7 + 0.3; // 0.3 to 1.0
+    const ambientIntensity = Math.sin(timeOfDay * Math.PI * 2) * 0.2 + 0.3; // 0.3 to 0.5
+    const hemiIntensity = Math.sin(timeOfDay * Math.PI * 2) * 0.2 + 0.2; // 0.2 to 0.4
+
+    sun.intensity = lightIntensity * 1.2;
+    ambient.intensity = ambientIntensity * 0.5;
+    hemi.intensity = hemiIntensity * 0.4;
+
+    // Sun position based on time of day
+    sun.position.set(
+        Math.sin(timeOfDay * Math.PI * 2) * 80,
+        Math.cos(timeOfDay * Math.PI * 2) * 80 + 20, // Keep sun above horizon for most of the day
+        Math.sin(timeOfDay * Math.PI * 2) * 50
+    );
+
+    // Sky and fog color interpolation
+    const currentSkyColor = new THREE.Color();
+    const currentFogColor = new THREE.Color();
+    const currentAmbientColor = new THREE.Color();
+
+    if (timeOfDay >= 0.25 && timeOfDay < 0.5) { // Morning to Noon
+        const t = (timeOfDay - 0.25) / 0.25;
+        currentSkyColor.lerpColors(new THREE.Color(skyColors.day), new THREE.Color(skyColors.day), t); // Stays day
+        currentFogColor.lerpColors(fogDayColor, fogDayColor, t);
+        currentAmbientColor.lerpColors(ambientDayColor, ambientDayColor, t);
+    } else if (timeOfDay >= 0.5 && timeOfDay < 0.75) { // Noon to Sunset
+        const t = (timeOfDay - 0.5) / 0.25;
+        currentSkyColor.lerpColors(new THREE.Color(skyColors.day), new THREE.Color(skyColors.sunset), t);
+        currentFogColor.lerpColors(fogDayColor, new THREE.Color(0xFF7043), t);
+        currentAmbientColor.lerpColors(ambientDayColor, new THREE.Color(0xBB8866), t); // Warmer ambient
+    } else if (timeOfDay >= 0.75 && timeOfDay < 1.0) { // Sunset to Night
+        const t = (timeOfDay - 0.75) / 0.25;
+        currentSkyColor.lerpColors(new THREE.Color(skyColors.sunset), new THREE.Color(skyColors.night), t);
+        currentFogColor.lerpColors(new THREE.Color(0xFF7043), fogNightColor, t);
+        currentAmbientColor.lerpColors(new THREE.Color(0xBB8866), ambientNightColor, t);
+    } else { // Night to Morning
+        const t = timeOfDay / 0.25;
+        currentSkyColor.lerpColors(new THREE.Color(skyColors.night), new THREE.Color(skyColors.day), t);
+        currentFogColor.lerpColors(fogNightColor, fogDayColor, t);
+        currentAmbientColor.lerpColors(ambientNightColor, ambientDayColor, t);
+    }
+
+    renderer.setClearColor(currentSkyColor);
+    scene.fog.color.copy(currentFogColor);
+    ambient.color.copy(currentAmbientColor);
+
+    // Star visibility at night
+    stars.material.opacity = Math.max(0, Math.sin(timeOfDay * Math.PI * 2 + Math.PI)); // Fade in at night
+
+    // Player movement
+    const actualWalkSpeed = keys.shift ? WALK_SPEED * 1.8 : WALK_SPEED; // Sprinting
+    direction.z = (keys.w || joystickOffset.y < -0.2) ? 1 : (keys.s || joystickOffset.y > 0.2 ? -1 : 0);
+    direction.x = (keys.a || joystickOffset.x < -0.2) ? 1 : (keys.d || joystickOffset.x > 0.2 ? -1 : 0);
+    direction.normalize();
+
+    velocity.x -= velocity.x * 10.0 * deltaTime;
+    velocity.z -= velocity.z * 10.0 * deltaTime;
+    velocity.y += GRAVITY;
+
+    // Apply movement
+    const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion);
+    const right = new THREE.Vector3(1, 0, 0).applyQuaternion(camera.quaternion);
+
+    if (keys.w || joystickOffset.y < -0.2) velocity.add(forward.multiplyScalar(actualWalkSpeed));
+    if (keys.s || joystickOffset.y > 0.2) velocity.sub(forward.multiplyScalar(actualWalkSpeed));
+    if (keys.a || joystickOffset.x < -0.2) velocity.sub(right.multiplyScalar(actualWalkSpeed));
+    if (keys.d || joystickOffset.x > 0.2) velocity.add(right.multiplyScalar(actualWalkSpeed));
+
+    // Collision detection (simplified AABB)
+    const newX = camera.position.x + velocity.x;
+    const newY = camera.position.y + velocity.y;
+    const newZ = camera.position.z + velocity.z;
+
+    const checkCollision = (x, y, z) => {
+        const blockX = Math.floor(x);
+        const blockY = Math.floor(y);
+        const blockZ = Math.floor(z);
+        return hasBlock(blockX, blockY, blockZ);
+    };
+
+    // Check X collision
+    if (checkCollision(newX + PLAYER_WIDTH / 2, camera.position.y - PLAYER_EYE_HEIGHT, camera.position.z) ||
+        checkCollision(newX - PLAYER_WIDTH / 2, camera.position.y - PLAYER_EYE_HEIGHT, camera.position.z) ||
+        checkCollision(newX + PLAYER_WIDTH / 2, camera.position.y - PLAYER_EYE_HEIGHT + PLAYER_HEIGHT - 0.1, camera.position.z) ||
+        checkCollision(newX - PLAYER_WIDTH / 2, camera.position.y - PLAYER_EYE_HEIGHT + PLAYER_HEIGHT - 0.1, camera.position.z)) {
+        velocity.x = 0;
+    } else {
+        camera.position.x = newX;
+    }
+
+    // Check Z collision
+    if (checkCollision(camera.position.x, camera.position.y - PLAYER_EYE_HEIGHT, newZ + PLAYER_WIDTH / 2) ||
+        checkCollision(camera.position.x, camera.position.y - PLAYER_EYE_HEIGHT, newZ - PLAYER_WIDTH / 2) ||
+        checkCollision(camera.position.x, camera.position.y - PLAYER_EYE_HEIGHT + PLAYER_HEIGHT - 0.1, newZ + PLAYER_WIDTH / 2) ||
+        checkCollision(camera.position.x, camera.position.y - PLAYER_EYE_HEIGHT + PLAYER_HEIGHT - 0.1, newZ - PLAYER_WIDTH / 2)) {
+        velocity.z = 0;
+    } else {
+        camera.position.z = newZ;
+    }
+
+    // Check Y collision (ground)
+    if (velocity.y < 0) { // Falling
+        if (checkCollision(camera.position.x, newY - PLAYER_EYE_HEIGHT, camera.position.z) ||
+            checkCollision(camera.position.x + PLAYER_WIDTH / 2 * 0.8, newY - PLAYER_EYE_HEIGHT, camera.position.z) || // Smaller collision box for corners
+            checkCollision(camera.position.x - PLAYER_WIDTH / 2 * 0.8, newY - PLAYER_EYE_HEIGHT, camera.position.z) ||
+            checkCollision(camera.position.x, newY - PLAYER_EYE_HEIGHT, camera.position.z + PLAYER_WIDTH / 2 * 0.8) ||
+            checkCollision(camera.position.x, newY - PLAYER_EYE_HEIGHT, camera.position.z - PLAYER_WIDTH / 2 * 0.8)) {
+            velocity.y = 0;
+            camera.position.y = Math.floor(newY - PLAYER_EYE_HEIGHT) + PLAYER_EYE_HEIGHT + 1.001; // Snap to top of block
+            onGround = true;
+        } else {
+            camera.position.y = newY;
+            onGround = false;
+        }
+    } else { // Jumping or moving up
+        if (checkCollision(camera.position.x, newY + PLAYER_HEIGHT - PLAYER_EYE_HEIGHT - 0.1, camera.position.z)) { // Head collision
+            velocity.y = 0;
+        }
+        camera.position.y = newY;
+    }
+
+    // Prevent falling through bedrock
+    if (camera.position.y < -50) { // If player falls too far
+        camera.position.set(0, 50, 0);
+        velocity.set(0, 0, 0);
+        showMessage("You fell into the void!");
+        // Optionally reduce health or reset game
+    }
+
+
+    // Update chunk visibility and generation
+    updateChunks();
+
+    // Debug info
+    posDiv.textContent = `XYZ: ${camera.position.x.toFixed(2)} / ${camera.position.y.toFixed(2)} / ${camera.position.z.toFixed(2)}`;
+    chunkDiv.textContent = `Chunk: ${currentChunkX},${currentChunkZ}`;
+    biomeDiv.textContent = `Biome: TODO`; // Implement biome detection
+    chunksRenderedDiv.textContent = `Chunks: ${Object.keys(chunks).length}`;
+    blocksRenderedDiv.textContent = `Blocks: ${Object.keys(blockData).length}`; // This is a rough count, not truly rendered blocks
+
+    renderer.render(scene, camera);
+}
+
+// Update chunks around the player
+function updateChunks() {
+    const playerChunkX = Math.floor(camera.position.x / CHUNK_SIZE);
+    const playerChunkZ = Math.floor(camera.position.z / CHUNK_SIZE);
+
+    if (playerChunkX !== currentChunkX || playerChunkZ !== currentChunkZ) {
+        currentChunkX = playerChunkX;
+        currentChunkZ = playerChunkZ;
+        console.log(`Player entered chunk: ${currentChunkX},${currentChunkZ}`);
+
+        // Remove distant chunks
+        for (const key in chunks) {
+            const chunk = chunks[key];
+            const dist = Math.max(
+                Math.abs(chunk.x - currentChunkX),
+                Math.abs(chunk.z - currentChunkZ)
+            );
+            if (dist > RENDER_DISTANCE + 1) { // +1 to prevent flickering at edge
+                scene.remove(chunk.mesh);
+                chunk.mesh.geometry.dispose();
+                // chunk.mesh.material.forEach(m => m.dispose()); // Materials are shared
+                delete chunks[key];
+                // Also remove blockData for this chunk to free memory
+                const startX = chunk.x * CHUNK_SIZE;
+                const startZ = chunk.z * CHUNK_SIZE;
+                for (let y = 0; y < MAX_BUILD_HEIGHT; y++) {
+                    for (let z = 0; z < CHUNK_SIZE; z++) {
+                        for (let x = 0; x < CHUNK_SIZE; x++) {
+                            delete blockData[`${startX + x},${y},${startZ + z}`];
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // Generate/rebuild nearby chunks
+    for (let x = -RENDER_DISTANCE; x <= RENDER_DISTANCE; x++) {
+        for (let z = -RENDER_DISTANCE; z <= RENDER_DISTANCE; z++) {
+            const chunkX = currentChunkX + x;
+            const chunkZ = currentChunkZ + z;
+            const chunkKey = `${chunkX},${chunkZ}`;
+
+            if (!chunks[chunkKey]) {
+                const newChunk = new Chunk(chunkX, chunkZ);
+                newChunk.generate(); // Generate terrain
+                chunks[chunkKey] = newChunk;
+            }
+
+            if (chunks[chunkKey].isDirty) {
+                chunks[chunkKey].rebuildMesh(); // Rebuild mesh if marked dirty
+            }
+        }
+    }
+}
+
+// Handle window resize
+window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+// Block interaction logic (break and place)
+function getTargetBlock() {
+    raycaster.setFromCamera(pointer, camera);
+    const intersects = raycaster.intersectObjects(scene.children);
+
+    for (const intersect of intersects) {
+        // Only interact with chunk meshes
+        if (intersect.object.type === 'Mesh' && intersect.object.parent === scene) {
+            // Get the position of the intersected block
+            const blockX = Math.floor(intersect.point.x - intersect.face.normal.x * 0.01);
+            const blockY = Math.floor(intersect.point.y - intersect.face.normal.y * 0.01);
+            const blockZ = Math.floor(intersect.point.z - intersect.face.normal.z * 0.01);
+
+            return {
+                block: { x: blockX, y: blockY, z: blockZ },
+                faceNormal: intersect.face.normal
+            };
+        }
+    }
+    return null;
+}
+
+// Break block
+function breakBlock() {
+    const target = getTargetBlock();
+    if (target) {
+        const { x, y, z } = target.block;
+        const chunkX = Math.floor(x / CHUNK_SIZE);
+        const chunkZ = Math.floor(z / CHUNK_SIZE);
+        const chunk = chunks[`${chunkX},${chunkZ}`];
+
+        if (chunk && hasBlock(x,y,z)) { // Ensure it's a real block
+            if (blockData[`${x},${y},${z}`] === 'bedrock') {
+                showMessage("You cannot break bedrock!");
+                return;
+            }
+            chunk.setBlock(x, y, z, 'air');
+            chunk.isDirty = true;
+            // Mark surrounding chunks dirty if block is on chunk boundary
+            if (x % CHUNK_SIZE === 0 || x % CHUNK_SIZE === CHUNK_SIZE - 1 ||
+                z % CHUNK_SIZE === 0 || z % CHUNK_SIZE === CHUNK_SIZE - 1) {
+                updateSurroundingChunksDirty(chunkX, chunkZ);
+            }
+            chunk.rebuildMesh(); // Rebuild the chunk mesh immediately
+            showMessage(`Broke ${blockData[`${x},${y},${z}`]} at ${x},${y},${z}`);
+            delete blockData[`${x},${y},${z}`]; // Remove from global blockData
+        }
+    }
+}
+
+// Place block
+function placeBlock() {
+    const target = getTargetBlock();
+    if (target) {
+        const { x, y, z } = target.block;
+        const { x: nx, y: ny, z: nz } = target.faceNormal;
+
+        const placeX = x + nx;
+        const placeY = y + ny;
+        const placeZ = z + nz;
+
+        // Prevent placing block inside player
+        if (Math.abs(placeX - camera.position.x) < PLAYER_WIDTH / 2 &&
+            Math.abs(placeY - (camera.position.y - PLAYER_EYE_HEIGHT)) < PLAYER_HEIGHT &&
+            Math.abs(placeZ - camera.position.z) < PLAYER_WIDTH / 2) {
+            showMessage("Cannot place block inside player!");
+            return;
+        }
+        if (placeY >= MAX_BUILD_HEIGHT) {
+            showMessage("Cannot place blocks above build limit!");
+            return;
+        }
+
+        const chunkX = Math.floor(placeX / CHUNK_SIZE);
+        const chunkZ = Math.floor(placeZ / CHUNK_SIZE);
+        const chunk = chunks[`${chunkX},${chunkZ}`];
+
+        if (chunk && !hasBlock(placeX, placeY, placeZ)) { // Ensure it's empty
+            chunk.setBlock(placeX, placeY, placeZ, selectedBlockType);
+            chunk.isDirty = true;
+            // Mark surrounding chunks dirty if block is on chunk boundary
+            if (placeX % CHUNK_SIZE === 0 || placeX % CHUNK_SIZE === CHUNK_SIZE - 1 ||
+                placeZ % CHUNK_SIZE === 0 || placeZ % CHUNK_SIZE === CHUNK_SIZE - 1) {
+                updateSurroundingChunksDirty(chunkX, chunkZ);
+            }
+            chunk.rebuildMesh(); // Rebuild the chunk mesh immediately
+            showMessage(`Placed ${selectedBlockType} at ${placeX},${placeY},${placeZ}`);
+        }
+    }
+}
+
+// Helper to mark surrounding chunks dirty for mesh rebuilds
+function updateSurroundingChunksDirty(cx, cz) {
+    for (let x = -1; x <= 1; x++) {
+        for (let z = -1; z <= 1; z++) {
+            const neighborChunkKey = `${cx + x},${cz + z}`;
+            if (chunks[neighborChunkKey]) {
+                chunks[neighborChunkKey].isDirty = true;
+            }
+        }
+    }
+}
+
+// Start preloading textures
+preloadTextures();
+
+</script>
+</body>
+</html>
