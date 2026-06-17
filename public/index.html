@@ -8,241 +8,458 @@
 * { margin:0; padding:0; box-sizing:border-box; }
 body { background:#000; overflow:hidden; }
 canvas { display:block; }
+#crosshair {
+  position:fixed; top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  color:#fff; font-size:28px;
+  pointer-events:none; text-shadow:1px 1px #000;
+}
 #ui {
   position:fixed; top:10px; left:50%;
   transform:translateX(-50%);
   color:#fff; font-family:monospace;
-  font-size:14px; text-align:center;
+  font-size:13px; text-align:center;
   text-shadow:1px 1px #000;
 }
-#crosshair {
-  position:fixed; top:50%; left:50%;
-  transform:translate(-50%,-50%);
-  color:#fff; font-size:24px;
-  pointer-events:none;
-}
 #hotbar {
-  position:fixed; bottom:20px; left:50%;
+  position:fixed; bottom:80px; left:50%;
   transform:translateX(-50%);
   display:flex; gap:4px;
 }
 .slot {
-  width:50px; height:50px;
-  background:rgba(0,0,0,0.6);
+  width:48px; height:48px;
+  background:rgba(0,0,0,0.5);
   border:2px solid #888;
   display:flex; align-items:center;
   justify-content:center;
-  color:#fff; font-size:10px;
-  cursor:pointer; border-radius:4px;
+  color:#fff; font-size:9px;
+  cursor:pointer; border-radius:3px;
+  flex-direction:column; gap:2px;
 }
-.slot.active { border-color:#fff; }
-#players {
-  position:fixed; top:10px; right:10px;
-  color:#fff; font-family:monospace;
-  font-size:12px; background:rgba(0,0,0,0.5);
-  padding:8px; border-radius:4px;
-}
+.slot.active { border-color:#fff; background:rgba(255,255,255,0.2); }
 #controls {
-  position:fixed; bottom:80px; left:50%;
+  position:fixed; bottom:10px; left:50%;
   transform:translateX(-50%);
-  display:grid; grid-template-columns:repeat(3,50px);
+  display:grid;
+  grid-template-columns:repeat(3,52px);
   gap:4px;
 }
-.ctrl-btn {
-  width:50px; height:50px;
-  background:rgba(0,0,0,0.6);
-  border:2px solid #888;
-  color:#fff; font-size:18px;
+.ctrl {
+  width:52px; height:52px;
+  background:rgba(0,0,0,0.5);
+  border:2px solid #666;
+  color:#fff; font-size:20px;
   display:flex; align-items:center;
   justify-content:center;
   border-radius:4px; cursor:pointer;
+  user-select:none; -webkit-user-select:none;
+}
+#players {
+  position:fixed; top:10px; right:10px;
+  color:#fff; font-family:monospace;
+  font-size:11px; background:rgba(0,0,0,0.5);
+  padding:6px; border-radius:4px;
+}
+#joystick-area {
+  position:fixed; bottom:10px; left:10px;
+  width:120px; height:120px;
+}
+#joystick-base {
+  width:120px; height:120px;
+  background:rgba(255,255,255,0.1);
+  border:2px solid rgba(255,255,255,0.3);
+  border-radius:50%;
+  position:relative;
+}
+#joystick-knob {
+  width:50px; height:50px;
+  background:rgba(255,255,255,0.4);
+  border-radius:50%;
+  position:absolute;
+  top:50%; left:50%;
+  transform:translate(-50%,-50%);
+}
+#action-btns {
+  position:fixed; bottom:10px; right:10px;
+  display:flex; flex-direction:column; gap:6px;
+}
+.action-btn {
+  width:56px; height:56px;
+  background:rgba(0,0,0,0.5);
+  border:2px solid #666;
+  color:#fff; font-size:22px;
+  display:flex; align-items:center;
+  justify-content:center;
+  border-radius:8px; cursor:pointer;
   user-select:none;
 }
 </style>
 </head>
 <body>
-<canvas id="canvas"></canvas>
-<div id="ui">
-  <div id="coords">X:0 Y:0 Z:0</div>
-  <div id="playerCount">Players: 1</div>
-</div>
+<canvas id="c"></canvas>
 <div id="crosshair">+</div>
+<div id="ui">
+  <div id="pos">X:0 Y:0 Z:0</div>
+  <div id="pcount">Players: 1</div>
+</div>
 <div id="players">Online: 1</div>
 
 <div id="hotbar">
-  <div class="slot active" onclick="selectBlock(0)" style="background:rgba(100,60,20,0.8)">🟫 Dirt</div>
-  <div class="slot" onclick="selectBlock(1)" style="background:rgba(80,80,80,0.8)">⬜ Stone</div>
-  <div class="slot" onclick="selectBlock(2)" style="background:rgba(20,100,20,0.8)">🟩 Grass</div>
-  <div class="slot" onclick="selectBlock(3)" style="background:rgba(150,100,30,0.8)">🪵 Wood</div>
-  <div class="slot" onclick="selectBlock(4)" style="background:rgba(200,200,100,0.8)">🟨 Sand</div>
+  <div class="slot active" onclick="selBlock(0)"><span style="font-size:18px">🟫</span>Dirt</div>
+  <div class="slot" onclick="selBlock(1)"><span style="font-size:18px">⬜</span>Stone</div>
+  <div class="slot" onclick="selBlock(2)"><span style="font-size:18px">🟩</span>Grass</div>
+  <div class="slot" onclick="selBlock(3)"><span style="font-size:18px">🪵</span>Wood</div>
+  <div class="slot" onclick="selBlock(4)"><span style="font-size:18px">🟨</span>Sand</div>
 </div>
 
-<div id="controls">
-  <div></div>
-  <div class="ctrl-btn" id="btnUp" ontouchstart="keys.w=true" ontouchend="keys.w=false">▲</div>
-  <div></div>
-  <div class="ctrl-btn" id="btnLeft" ontouchstart="keys.a=true" ontouchend="keys.a=false">◀</div>
-  <div class="ctrl-btn" ontouchstart="placeOrRemove()" ontouchend="">🧱</div>
-  <div class="ctrl-btn" id="btnRight" ontouchstart="keys.d=true" ontouchend="keys.d=false">▶</div>
-  <div></div>
-  <div class="ctrl-btn" id="btnDown" ontouchstart="keys.s=true" ontouchend="keys.s=false">▼</div>
-  <div></div>
+<div id="joystick-area">
+  <div id="joystick-base">
+    <div id="joystick-knob"></div>
+  </div>
 </div>
 
+<div id="action-btns">
+  <div class="action-btn" id="jumpBtn">⬆️</div>
+  <div class="action-btn" id="placeBtn">🧱</div>
+  <div class="action-btn" id="breakBtn">⛏️</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script>
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+// ── Three.js Setup ──────────────────────────────────────
+const canvas = document.getElementById('c');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: false });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-const socket = io();
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x87CEEB);
+scene.fog = new THREE.Fog(0x87CEEB, 20, 60);
+
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 100);
+camera.position.set(25, 2, 25);
+
+// Lighting
+const sun = new THREE.DirectionalLight(0xffffff, 1);
+sun.position.set(10, 20, 10);
+sun.castShadow = true;
+scene.add(sun);
+scene.add(new THREE.AmbientLight(0xffffff, 0.4));
+
+// Block colors
+const BLOCK_COLORS = {
+  grass: { top: 0x5D8A3C, side: 0x7A5C3C, bottom: 0x7A5C3C },
+  dirt:  { top: 0x8B6340, side: 0x8B6340, bottom: 0x8B6340 },
+  stone: { top: 0x7D7D7D, side: 0x7D7D7D, bottom: 0x7D7D7D },
+  wood:  { top: 0x9C6B2E, side: 0x9C6B2E, bottom: 0x9C6B2E },
+  sand:  { top: 0xE8D59A, side: 0xE8D59A, bottom: 0xE8D59A },
+};
+
+const blockMeshes = {};
+const playerMeshes = {};
+
+function makeBlockMat(color) {
+  return new THREE.MeshLambertMaterial({ color });
+}
+
+function addBlock(x, y, z, type) {
+  const key = `${x},${y},${z}`;
+  if (blockMeshes[key]) return;
+  const geo = new THREE.BoxGeometry(1,1,1);
+  const c = BLOCK_COLORS[type] || BLOCK_COLORS.dirt;
+  const mat = [
+    makeBlockMat(c.side), makeBlockMat(c.side),
+    makeBlockMat(c.top),  makeBlockMat(c.bottom),
+    makeBlockMat(c.side), makeBlockMat(c.side),
+  ];
+  const mesh = new THREE.Mesh(geo, mat);
+  mesh.position.set(x+0.5, y+0.5, z+0.5);
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+  // Outline
+  const edges = new THREE.EdgesGeometry(geo);
+  const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({color:0x000000, transparent:true, opacity:0.3}));
+  mesh.add(line);
+  scene.add(mesh);
+  blockMeshes[key] = mesh;
+}
+
+function removeBlock(x, y, z) {
+  const key = `${x},${y},${z}`;
+  if (blockMeshes[key]) {
+    scene.remove(blockMeshes[key]);
+    delete blockMeshes[key];
+  }
+}
+
+function addPlayer(p) {
+  if (playerMeshes[p.id]) return;
+  const group = new THREE.Group();
+  // Body
+  const body = new THREE.Mesh(new THREE.BoxGeometry(0.6,0.9,0.3), new THREE.MeshLambertMaterial({color:0x4444ff}));
+  body.position.y = 0;
+  group.add(body);
+  // Head
+  const head = new THREE.Mesh(new THREE.BoxGeometry(0.5,0.5,0.5), new THREE.MeshLambertMaterial({color:0xC68642}));
+  head.position.y = 0.7;
+  group.add(head);
+  // Legs
+  [-0.15,0.15].forEach((x,i) => {
+    const leg = new THREE.Mesh(new THREE.BoxGeometry(0.25,0.6,0.25), new THREE.MeshLambertMaterial({color:0x223366}));
+    leg.position.set(x,-0.75,0);
+    group.add(leg);
+  });
+  // Name
+  group.position.set(p.x, p.y, p.z);
+  scene.add(group);
+  playerMeshes[p.id] = group;
+}
+
+// ── Player State ─────────────────────────────────────────
 let myPlayer = null;
 let allPlayers = {};
 let blocks = {};
-let selectedBlock = 'dirt';
+let selIdx = 0;
 const blockTypes = ['dirt','stone','grass','wood','sand'];
-const blockColors = {
-  dirt:'#8B6340', stone:'#7D7D7D',
-  grass:'#5D8A3C', wood:'#9C6B2E',
-  sand:'#E8D59A'
-};
 
-const keys = { w:false,a:false,s:false,d:false };
-let camX = 0, camY = 0;
-const BLOCK_SIZE = 32;
+// Camera rotation
+let yaw = 0, pitch = 0;
+let lastTouch = null;
+let isLooking = false;
+let lookStartX = 0, lookStartY = 0;
 
-// Socket events
+// Movement
+const move = {f:0, r:0};
+let vy = 0;
+const GRAVITY = -0.015;
+const JUMP_V = 0.15;
+let onGround = false;
+
+// ── Socket ───────────────────────────────────────────────
+const socket = io();
+
 socket.on('init', (data) => {
   myPlayer = data.player;
   allPlayers = data.players;
   blocks = data.blocks;
-  camX = myPlayer.x * BLOCK_SIZE - canvas.width/2;
-  camY = myPlayer.z * BLOCK_SIZE - canvas.height/2;
+  camera.position.set(myPlayer.x, myPlayer.y + 1.6, myPlayer.z);
+  Object.entries(blocks).forEach(([k,t]) => {
+    const [x,y,z] = k.split(',').map(Number);
+    addBlock(x,y,z,t);
+  });
+  Object.values(allPlayers).forEach(p => {
+    if (p.id !== myPlayer.id) addPlayer(p);
+  });
   updateUI();
 });
 
-socket.on('playerJoined', (p) => { allPlayers[p.id] = p; updateUI(); });
-socket.on('playerMoved', (p) => { allPlayers[p.id] = p; });
-socket.on('playerLeft', (id) => { delete allPlayers[id]; updateUI(); });
-socket.on('blockPlaced', (d) => { blocks[`${d.x},${d.y},${d.z}`] = d.type; });
-socket.on('blockRemoved', (d) => { delete blocks[`${d.x},${d.y},${d.z}`]; });
+socket.on('playerJoined', (p) => {
+  allPlayers[p.id] = p;
+  addPlayer(p);
+  updateUI();
+});
 
-function selectBlock(i) {
-  selectedBlock = blockTypes[i];
-  document.querySelectorAll('.slot').forEach((s,idx) => {
-    s.classList.toggle('active', idx === i);
-  });
-}
-
-function placeOrRemove() {
-  if (!myPlayer) return;
-  const x = Math.floor(myPlayer.x);
-  const z = Math.floor(myPlayer.z);
-  const key = `${x},0,${z}`;
-  if (blocks[key]) {
-    socket.emit('removeBlock', {x,y:0,z});
-  } else {
-    socket.emit('placeBlock', {x,y:0,z,type:selectedBlock});
+socket.on('playerMoved', (p) => {
+  allPlayers[p.id] = p;
+  if (playerMeshes[p.id]) {
+    playerMeshes[p.id].position.set(p.x, p.y, p.z);
   }
-}
+});
+
+socket.on('playerLeft', (id) => {
+  delete allPlayers[id];
+  if (playerMeshes[id]) { scene.remove(playerMeshes[id]); delete playerMeshes[id]; }
+  updateUI();
+});
+
+socket.on('blockPlaced', (d) => { addBlock(d.x,d.y,d.z,d.type); blocks[`${d.x},${d.y},${d.z}`]=d.type; });
+socket.on('blockRemoved', (d) => { removeBlock(d.x,d.y,d.z); delete blocks[`${d.x},${d.y},${d.z}`]; });
 
 function updateUI() {
-  const count = Object.keys(allPlayers).length;
-  document.getElementById('playerCount').textContent = 'Players: ' + count;
-  document.getElementById('players').textContent = 
-    'Online: ' + count + '\n' +
-    Object.values(allPlayers).map(p=>p.name).join('\n');
+  const c = Object.keys(allPlayers).length;
+  document.getElementById('pcount').textContent = 'Players: '+c;
+  document.getElementById('players').textContent = 'Online: '+c+'\n'+Object.values(allPlayers).map(p=>p.name).join('\n');
 }
 
-// Game loop
-function update() {
-  if (!myPlayer) return;
-  const speed = 0.1;
-  let moved = false;
-  if (keys.w) { myPlayer.z -= speed; moved = true; }
-  if (keys.s) { myPlayer.z += speed; moved = true; }
-  if (keys.a) { myPlayer.x -= speed; moved = true; }
-  if (keys.d) { myPlayer.x += speed; moved = true; }
+// ── Block Interaction ─────────────────────────────────────
+const raycaster = new THREE.Raycaster();
 
-  if (moved) {
-    camX = myPlayer.x * BLOCK_SIZE - canvas.width/2;
-    camY = myPlayer.z * BLOCK_SIZE - canvas.height/2;
-    socket.emit('move', { x: myPlayer.x, z: myPlayer.z });
-    document.getElementById('coords').textContent =
-      `X:${Math.floor(myPlayer.x)} Z:${Math.floor(myPlayer.z)}`;
-  }
+function getTargetBlock() {
+  raycaster.setFromCamera({x:0,y:0}, camera);
+  const meshes = Object.values(blockMeshes);
+  const hits = raycaster.intersectObjects(meshes);
+  if (hits.length && hits[0].distance < 5) return hits[0];
+  return null;
 }
 
-function draw() {
-  ctx.fillStyle = '#87CEEB';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+function placeBlock() {
+  const hit = getTargetBlock();
+  if (!hit) return;
+  const n = hit.face.normal;
+  const pos = hit.object.position.clone().add(n).floor();
+  const x=Math.floor(pos.x), y=Math.floor(pos.y), z=Math.floor(pos.z);
+  socket.emit('placeBlock', {x,y,z,type:blockTypes[selIdx]});
+}
 
-  // Draw blocks
-  Object.entries(blocks).forEach(([key, type]) => {
-    const [x,,z] = key.split(',').map(Number);
-    const sx = x * BLOCK_SIZE - camX;
-    const sy = z * BLOCK_SIZE - camY;
-    if (sx > -BLOCK_SIZE && sx < canvas.width &&
-        sy > -BLOCK_SIZE && sy < canvas.height) {
-      ctx.fillStyle = blockColors[type] || '#888';
-      ctx.fillRect(sx, sy, BLOCK_SIZE-1, BLOCK_SIZE-1);
-      ctx.strokeStyle = 'rgba(0,0,0,0.3)';
-      ctx.strokeRect(sx, sy, BLOCK_SIZE-1, BLOCK_SIZE-1);
+function breakBlock() {
+  const hit = getTargetBlock();
+  if (!hit) return;
+  const p = hit.object.position;
+  const x=Math.floor(p.x), y=Math.floor(p.y), z=Math.floor(p.z);
+  socket.emit('removeBlock', {x,y,z});
+}
+
+document.getElementById('placeBtn').addEventListener('touchstart', e => { e.preventDefault(); placeBlock(); });
+document.getElementById('breakBtn').addEventListener('touchstart', e => { e.preventDefault(); breakBlock(); });
+document.getElementById('jumpBtn').addEventListener('touchstart', e => {
+  e.preventDefault();
+  if (onGround) { vy = JUMP_V; onGround = false; }
+});
+
+// ── Hotbar ───────────────────────────────────────────────
+function selBlock(i) {
+  selIdx = i;
+  document.querySelectorAll('.slot').forEach((s,idx)=>s.classList.toggle('active',idx===i));
+}
+
+// ── Joystick ─────────────────────────────────────────────
+const jBase = document.getElementById('joystick-base');
+const jKnob = document.getElementById('joystick-knob');
+const jRect = () => jBase.getBoundingClientRect();
+let jActive = false, jId = null;
+const MAX_R = 40;
+
+jBase.addEventListener('touchstart', e => {
+  e.preventDefault();
+  const t = e.changedTouches[0];
+  jActive = true; jId = t.identifier;
+}, {passive:false});
+
+document.addEventListener('touchmove', e => {
+  if (jActive) {
+    for (let t of e.changedTouches) {
+      if (t.identifier === jId) {
+        const r = jRect();
+        const dx = t.clientX - (r.left + r.width/2);
+        const dy = t.clientY - (r.top + r.height/2);
+        const dist = Math.min(Math.sqrt(dx*dx+dy*dy), MAX_R);
+        const angle = Math.atan2(dy, dx);
+        jKnob.style.transform = `translate(calc(-50% + ${Math.cos(angle)*dist}px), calc(-50% + ${Math.sin(angle)*dist}px))`;
+        move.f = -dy / MAX_R;
+        move.r = dx / MAX_R;
+      }
     }
-  });
-
-  // Draw other players
-  Object.values(allPlayers).forEach(p => {
-    if (!myPlayer || p.id === myPlayer.id) return;
-    const sx = p.x * BLOCK_SIZE - camX;
-    const sy = p.z * BLOCK_SIZE - camY;
-    ctx.fillStyle = '#FF4444';
-    ctx.fillRect(sx-8, sy-8, 16, 16);
-    ctx.fillStyle = '#fff';
-    ctx.font = '10px monospace';
-    ctx.textAlign = 'center';
-    ctx.fillText(p.name, sx, sy-12);
-  });
-
-  // Draw my player
-  if (myPlayer) {
-    const sx = myPlayer.x * BLOCK_SIZE - camX;
-    const sy = myPlayer.z * BLOCK_SIZE - camY;
-    ctx.fillStyle = '#4444FF';
-    ctx.fillRect(sx-8, sy-8, 16, 16);
-    ctx.fillStyle = '#fff';
-    ctx.font = '10px monospace';
-    ctx.textAlign = 'center';
-    ctx.fillText('YOU', sx, sy-12);
   }
-}
+  // Camera look (right side of screen)
+  for (let t of e.changedTouches) {
+    if (t.identifier !== jId && t.clientX > window.innerWidth/2) {
+      if (!isLooking) { isLooking=true; lookStartX=t.clientX; lookStartY=t.clientY; }
+      yaw -= (t.clientX - lookStartX) * 0.005;
+      pitch -= (t.clientY - lookStartY) * 0.005;
+      pitch = Math.max(-Math.PI/2+0.1, Math.min(Math.PI/2-0.1, pitch));
+      lookStartX = t.clientX; lookStartY = t.clientY;
+    }
+  }
+}, {passive:false});
 
-function loop() {
-  update();
-  draw();
-  requestAnimationFrame(loop);
-}
-loop();
+document.addEventListener('touchend', e => {
+  for (let t of e.changedTouches) {
+    if (t.identifier === jId) {
+      jActive = false; move.f = 0; move.r = 0;
+      jKnob.style.transform = 'translate(-50%,-50%)';
+    }
+    if (t.clientX > window.innerWidth/2) isLooking = false;
+  }
+});
 
 // Keyboard
-document.addEventListener('keydown', e => {
-  if (e.key==='w'||e.key==='ArrowUp') keys.w=true;
-  if (e.key==='s'||e.key==='ArrowDown') keys.s=true;
-  if (e.key==='a'||e.key==='ArrowLeft') keys.a=true;
-  if (e.key==='d'||e.key==='ArrowRight') keys.d=true;
-  if (e.key===' ') placeOrRemove();
-});
-document.addEventListener('keyup', e => {
-  if (e.key==='w'||e.key==='ArrowUp') keys.w=false;
-  if (e.key==='s'||e.key==='ArrowDown') keys.s=false;
-  if (e.key==='a'||e.key==='ArrowLeft') keys.a=false;
-  if (e.key==='d'||e.key==='ArrowRight') keys.d=false;
+const keys = {};
+document.addEventListener('keydown', e => keys[e.key.toLowerCase()] = true);
+document.addEventListener('keyup', e => keys[e.key.toLowerCase()] = false);
+document.addEventListener('click', () => canvas.requestPointerLock && canvas.requestPointerLock());
+document.addEventListener('mousemove', e => {
+  if (document.pointerLockElement === canvas) {
+    yaw -= e.movementX * 0.002;
+    pitch -= e.movementY * 0.002;
+    pitch = Math.max(-Math.PI/2+0.1, Math.min(Math.PI/2-0.1, pitch));
+  }
 });
 
+// ── Game Loop ─────────────────────────────────────────────
+const SPEED = 0.08;
+let lastSend = 0;
+
+function hasBlock(x,y,z) {
+  return !!blocks[`${Math.floor(x)},${Math.floor(y)},${Math.floor(z)}`];
+}
+
+function animate() {
+  requestAnimationFrame(animate);
+
+  if (!myPlayer) { renderer.render(scene, camera); return; }
+
+  // Keyboard movement
+  if (keys['w']||keys['arrowup']) move.f = 1;
+  else if (keys['s']||keys['arrowdown']) move.f = -1;
+  if (keys['a']||keys['arrowleft']) move.r = -1;
+  else if (keys['d']||keys['arrowright']) move.r = 1;
+  if ((keys[' ']||keys['space']) && onGround) { vy=JUMP_V; onGround=false; }
+
+  // Camera direction
+  const dir = new THREE.Vector3();
+  camera.getWorldDirection(dir);
+  dir.y = 0; dir.normalize();
+  const right = new THREE.Vector3(-dir.z, 0, dir.x);
+
+  // Move
+  const vel = new THREE.Vector3();
+  vel.addScaledVector(dir, move.f * SPEED);
+  vel.addScaledVector(right, move.r * SPEED);
+
+  camera.position.x += vel.x;
+  camera.position.z += vel.z;
+
+  // Gravity
+  vy += GRAVITY;
+  camera.position.y += vy;
+
+  // Ground collision
+  const groundY = 1.6;
+  if (camera.position.y < groundY) {
+    camera.position.y = groundY;
+    vy = 0; onGround = true;
+  }
+
+  // Camera rotation
+  camera.rotation.order = 'YXZ';
+  camera.rotation.y = yaw;
+  camera.rotation.x = pitch;
+
+  // Update position
+  myPlayer.x = camera.position.x;
+  myPlayer.y = camera.position.y - 1.6;
+  myPlayer.z = camera.position.z;
+
+  // Send position
+  const now = Date.now();
+  if (now - lastSend > 50) {
+    socket.emit('move', { x:myPlayer.x, y:myPlayer.y, z:myPlayer.z });
+    lastSend = now;
+  }
+
+  document.getElementById('pos').textContent =
+    `X:${Math.floor(myPlayer.x)} Y:${Math.floor(myPlayer.y)} Z:${Math.floor(myPlayer.z)}`;
+
+  renderer.render(scene, camera);
+}
+animate();
+
 window.addEventListener('resize', () => {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+  camera.aspect = window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
 });
 </script>
 </body>
