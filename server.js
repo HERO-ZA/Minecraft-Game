@@ -1,39 +1,47 @@
-/**
- * MINECRAFT PWA - server.js
- * Railway Backend | Socket.io Multiplayer | MongoDB World Saving
- * Node.js + Express + Socket.io
- *
- * Install: npm install express socket.io mongoose cors
- * Start:   node server.js  (or: PORT=3000 node server.js)
- */
+const express = require('express');
+const app = express();
+const http = require('http').createServer(app);
+const io = require('socket.io')(http, { cors: { origin: "*" } });
 
-const express    = require('express');
-const http       = require('http');
-const { Server } = require('socket.io');
-const mongoose   = require('mongoose');
-const cors       = require('cors');
-const path       = require('path');
+app.use(express.static('public'));
 
-const app    = express();
-const server = http.createServer(app);
-const io     = new Server(server, {
-  cors: { origin: '*', methods: ['GET','POST'] },
-  transports: ['websocket', 'polling'],
+let players = {};
+
+io.on('connection', (socket) => {
+    console.log(`Player connected: ${socket.id}`);
+    players[socket.id] = { x: 0, y: 0, z: 0, ry: 0, anim: 'idle' };
+
+    // အသစ်ဝင်လာသူကို လက်ရှိရှိနေတဲ့ Player စာရင်း ပို့ပေးခြင်း
+    socket.emit('currentPlayers', players);
+    // အခြားသူများဆီသို့ Player အသစ်ဝင်လာကြောင်း အသိပေးခြင်း
+    socket.broadcast.emit('newPlayer', { id: socket.id, ...players[socket.id] });
+
+    // တည်နေရာနှင့် Animation ပြောင်းလဲမှုများကို Sync လုပ်ခြင်း
+    socket.on('playerMovement', (movementData) => {
+        if (players[socket.id]) {
+            players[socket.id].x = movementData.x;
+            players[socket.id].y = movementData.y;
+            players[socket.id].z = movementData.z;
+            players[socket.id].ry = movementData.ry;
+            players[socket.id].anim = movementData.anim;
+            socket.broadcast.emit('playerMoved', { id: socket.id, ...players[socket.id] });
+        }
+    });
+
+    // Emoji အထူး Animation စနစ်
+    socket.on('playEmoji', (emojiData) => {
+        socket.broadcast.emit('emojiTriggered', { id: socket.id, emoji: emojiData.emoji });
+    });
+
+    socket.on('disconnect', () => {
+        console.log(`Player disconnected: ${socket.id}`);
+        delete players[socket.id];
+        io.emit('playerDisconnected', socket.id);
+    });
 });
 
-const PORT     = process.env.PORT || 3000;
-const MONGO_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/minecraft_pwa';
-
-// ============================================================
-// MIDDLEWARE
-// ============================================================
-app.use(cors());
-app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public'))); // serve game files
-
-// ============================================================
-// MONGODB SCHEMAS
-// ============================================================
+const PORT = process.env.PORT || 3000;
+http.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 mongoose.connect(MONGO_URI, { useNewUrlParser:true, useUnifiedTopology:true })
   .then(()=> console.log('✅ MongoDB connected'))
   .catch(e=> console.warn('⚠️  MongoDB not connected (offline mode):', e.message));
