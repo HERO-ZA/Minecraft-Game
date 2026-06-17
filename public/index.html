@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minecraft Multiplayer</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#000; overflow:hidden; }
+canvas { display:block; }
+#ui {
+  position:fixed; top:10px; left:50%;
+  transform:translateX(-50%);
+  color:#fff; font-family:monospace;
+  font-size:14px; text-align:center;
+  text-shadow:1px 1px #000;
+}
+#crosshair {
+  position:fixed; top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  color:#fff; font-size:24px;
+  pointer-events:none;
+}
+#hotbar {
+  position:fixed; bottom:20px; left:50%;
+  transform:translateX(-50%);
+  display:flex; gap:4px;
+}
+.slot {
+  width:50px; height:50px;
+  background:rgba(0,0,0,0.6);
+  border:2px solid #888;
+  display:flex; align-items:center;
+  justify-content:center;
+  color:#fff; font-size:10px;
+  cursor:pointer; border-radius:4px;
+}
+.slot.active { border-color:#fff; }
+#players {
+  position:fixed; top:10px; right:10px;
+  color:#fff; font-family:monospace;
+  font-size:12px; background:rgba(0,0,0,0.5);
+  padding:8px; border-radius:4px;
+}
+#controls {
+  position:fixed; bottom:80px; left:50%;
+  transform:translateX(-50%);
+  display:grid; grid-template-columns:repeat(3,50px);
+  gap:4px;
+}
+.ctrl-btn {
+  width:50px; height:50px;
+  background:rgba(0,0,0,0.6);
+  border:2px solid #888;
+  color:#fff; font-size:18px;
+  display:flex; align-items:center;
+  justify-content:center;
+  border-radius:4px; cursor:pointer;
+  user-select:none;
+}
+</style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<div id="ui">
+  <div id="coords">X:0 Y:0 Z:0</div>
+  <div id="playerCount">Players: 1</div>
+</div>
+<div id="crosshair">+</div>
+<div id="players">Online: 1</div>
+
+<div id="hotbar">
+  <div class="slot active" onclick="selectBlock(0)" style="background:rgba(100,60,20,0.8)">🟫 Dirt</div>
+  <div class="slot" onclick="selectBlock(1)" style="background:rgba(80,80,80,0.8)">⬜ Stone</div>
+  <div class="slot" onclick="selectBlock(2)" style="background:rgba(20,100,20,0.8)">🟩 Grass</div>
+  <div class="slot" onclick="selectBlock(3)" style="background:rgba(150,100,30,0.8)">🪵 Wood</div>
+  <div class="slot" onclick="selectBlock(4)" style="background:rgba(200,200,100,0.8)">🟨 Sand</div>
+</div>
+
+<div id="controls">
+  <div></div>
+  <div class="ctrl-btn" id="btnUp" ontouchstart="keys.w=true" ontouchend="keys.w=false">▲</div>
+  <div></div>
+  <div class="ctrl-btn" id="btnLeft" ontouchstart="keys.a=true" ontouchend="keys.a=false">◀</div>
+  <div class="ctrl-btn" ontouchstart="placeOrRemove()" ontouchend="">🧱</div>
+  <div class="ctrl-btn" id="btnRight" ontouchstart="keys.d=true" ontouchend="keys.d=false">▶</div>
+  <div></div>
+  <div class="ctrl-btn" id="btnDown" ontouchstart="keys.s=true" ontouchend="keys.s=false">▼</div>
+  <div></div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const socket = io();
+let myPlayer = null;
+let allPlayers = {};
+let blocks = {};
+let selectedBlock = 'dirt';
+const blockTypes = ['dirt','stone','grass','wood','sand'];
+const blockColors = {
+  dirt:'#8B6340', stone:'#7D7D7D',
+  grass:'#5D8A3C', wood:'#9C6B2E',
+  sand:'#E8D59A'
+};
+
+const keys = { w:false,a:false,s:false,d:false };
+let camX = 0, camY = 0;
+const BLOCK_SIZE = 32;
+
+// Socket events
+socket.on('init', (data) => {
+  myPlayer = data.player;
+  allPlayers = data.players;
+  blocks = data.blocks;
+  camX = myPlayer.x * BLOCK_SIZE - canvas.width/2;
+  camY = myPlayer.z * BLOCK_SIZE - canvas.height/2;
+  updateUI();
+});
+
+socket.on('playerJoined', (p) => { allPlayers[p.id] = p; updateUI(); });
+socket.on('playerMoved', (p) => { allPlayers[p.id] = p; });
+socket.on('playerLeft', (id) => { delete allPlayers[id]; updateUI(); });
+socket.on('blockPlaced', (d) => { blocks[`${d.x},${d.y},${d.z}`] = d.type; });
+socket.on('blockRemoved', (d) => { delete blocks[`${d.x},${d.y},${d.z}`]; });
+
+function selectBlock(i) {
+  selectedBlock = blockTypes[i];
+  document.querySelectorAll('.slot').forEach((s,idx) => {
+    s.classList.toggle('active', idx === i);
+  });
+}
+
+function placeOrRemove() {
+  if (!myPlayer) return;
+  const x = Math.floor(myPlayer.x);
+  const z = Math.floor(myPlayer.z);
+  const key = `${x},0,${z}`;
+  if (blocks[key]) {
+    socket.emit('removeBlock', {x,y:0,z});
+  } else {
+    socket.emit('placeBlock', {x,y:0,z,type:selectedBlock});
+  }
+}
+
+function updateUI() {
+  const count = Object.keys(allPlayers).length;
+  document.getElementById('playerCount').textContent = 'Players: ' + count;
+  document.getElementById('players').textContent = 
+    'Online: ' + count + '\n' +
+    Object.values(allPlayers).map(p=>p.name).join('\n');
+}
+
+// Game loop
+function update() {
+  if (!myPlayer) return;
+  const speed = 0.1;
+  let moved = false;
+  if (keys.w) { myPlayer.z -= speed; moved = true; }
+  if (keys.s) { myPlayer.z += speed; moved = true; }
+  if (keys.a) { myPlayer.x -= speed; moved = true; }
+  if (keys.d) { myPlayer.x += speed; moved = true; }
+
+  if (moved) {
+    camX = myPlayer.x * BLOCK_SIZE - canvas.width/2;
+    camY = myPlayer.z * BLOCK_SIZE - canvas.height/2;
+    socket.emit('move', { x: myPlayer.x, z: myPlayer.z });
+    document.getElementById('coords').textContent =
+      `X:${Math.floor(myPlayer.x)} Z:${Math.floor(myPlayer.z)}`;
+  }
+}
+
+function draw() {
+  ctx.fillStyle = '#87CEEB';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Draw blocks
+  Object.entries(blocks).forEach(([key, type]) => {
+    const [x,,z] = key.split(',').map(Number);
+    const sx = x * BLOCK_SIZE - camX;
+    const sy = z * BLOCK_SIZE - camY;
+    if (sx > -BLOCK_SIZE && sx < canvas.width &&
+        sy > -BLOCK_SIZE && sy < canvas.height) {
+      ctx.fillStyle = blockColors[type] || '#888';
+      ctx.fillRect(sx, sy, BLOCK_SIZE-1, BLOCK_SIZE-1);
+      ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+      ctx.strokeRect(sx, sy, BLOCK_SIZE-1, BLOCK_SIZE-1);
+    }
+  });
+
+  // Draw other players
+  Object.values(allPlayers).forEach(p => {
+    if (!myPlayer || p.id === myPlayer.id) return;
+    const sx = p.x * BLOCK_SIZE - camX;
+    const sy = p.z * BLOCK_SIZE - camY;
+    ctx.fillStyle = '#FF4444';
+    ctx.fillRect(sx-8, sy-8, 16, 16);
+    ctx.fillStyle = '#fff';
+    ctx.font = '10px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText(p.name, sx, sy-12);
+  });
+
+  // Draw my player
+  if (myPlayer) {
+    const sx = myPlayer.x * BLOCK_SIZE - camX;
+    const sy = myPlayer.z * BLOCK_SIZE - camY;
+    ctx.fillStyle = '#4444FF';
+    ctx.fillRect(sx-8, sy-8, 16, 16);
+    ctx.fillStyle = '#fff';
+    ctx.font = '10px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('YOU', sx, sy-12);
+  }
+}
+
+function loop() {
+  update();
+  draw();
+  requestAnimationFrame(loop);
+}
+loop();
+
+// Keyboard
+document.addEventListener('keydown', e => {
+  if (e.key==='w'||e.key==='ArrowUp') keys.w=true;
+  if (e.key==='s'||e.key==='ArrowDown') keys.s=true;
+  if (e.key==='a'||e.key==='ArrowLeft') keys.a=true;
+  if (e.key==='d'||e.key==='ArrowRight') keys.d=true;
+  if (e.key===' ') placeOrRemove();
+});
+document.addEventListener('keyup', e => {
+  if (e.key==='w'||e.key==='ArrowUp') keys.w=false;
+  if (e.key==='s'||e.key==='ArrowDown') keys.s=false;
+  if (e.key==='a'||e.key==='ArrowLeft') keys.a=false;
+  if (e.key==='d'||e.key==='ArrowRight') keys.d=false;
+});
+
+window.addEventListener('resize', () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+</script>
+</body>
+</html>
