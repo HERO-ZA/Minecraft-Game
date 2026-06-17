@@ -1,0 +1,120 @@
+let socket = io();
+let scene, camera, renderer, localPlayer;
+let otherPlayers = {};
+let mixers = [];
+let currentAnimation = 'idle';
+
+document.getElementById('start-btn').addEventListener('click', () => {
+    document.getElementById('start-btn').style.display = 'none';
+    // FullScreen ရယူခြင်း
+    if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen();
+    initGame();
+});
+
+function initGame() {
+    scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x87CEEB); // Sky Blue
+
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+    // Light (အလင်း)
+    const light = new THREE.AmbientLight(0xffffff, 0.7);
+    scene.add(light);
+    const dirLight = new THREE.DirectionalLight(0xffffff, 0.5);
+    dirLight.position.set(10, 20, 15);
+    scene.add(dirLight);
+
+    // ရိုးရှင်းသော မြေပြင်ဆောက်ခြင်း (Minecraft Block ပုံစံ)
+    const geo = new THREE.BoxGeometry(1, 1, 1);
+    const mat = new THREE.MeshLambertMaterial({ color: 0x557a2b });
+    for(let x=-10; x<10; x++) {
+        for(let z=-10; z<10; z++) {
+            const block = new THREE.Mesh(geo, mat);
+            block.position.set(x, 0, z);
+            scene.add(block);
+        }
+    }
+
+    camera.position.set(0, 5, 10);
+    camera.lookAt(0, 2, 0);
+
+    // Socket.io ကွန်ရက် ချိတ်ဆက်မှု ယန္တရားများ
+    setupMultiplayer();
+    animate();
+}
+
+function setupMultiplayer() {
+    const loader = new THREE.GLTFLoader();
+
+    // အခြားသူများ ဝင်လာလျှင် ၎င်းတို့၏ Anime Model ကို ပုံဖော်ခြင်း
+    socket.on('currentPlayers', (players) => {
+        Object.keys(players).forEach((id) => {
+            if (id !== socket.id) createOtherPlayer(id, players[id], loader);
+        });
+    });
+
+    socket.on('newPlayer', (data) => {
+        createOtherPlayer(data.id, data, loader);
+    });
+
+    socket.on('playerMoved', (data) => {
+        if (otherPlayers[data.id]) {
+            otherPlayers[data.id].position.set(data.x, data.y, data.z);
+            otherPlayers[data.id].rotation.y = data.ry;
+            // Animation State Sync လုပ်ရန် logic ကို ဒီနေရာမှာ ထည့်သွင်းနိုင်သည်
+        }
+    });
+
+    socket.on('playerDisconnected', (id) => {
+        if (otherPlayers[id]) {
+            scene.remove(otherPlayers[id]);
+            delete otherPlayers[id];
+        }
+    });
+
+    // Emoji Animation Trigger ခံယူခြင်း
+    socket.on('emojiTriggered', (data) => {
+        if (otherPlayers[data.id]) {
+            console.log(`Player ${data.id} played emoji: ${data.emoji}`);
+            // တစ်ဖက်လူ ဆော့လိုက်သည့် Emoji အလိုက် Animation ဖွင့်ပေးရန်
+        }
+    });
+}
+
+function createOtherPlayer(id, data, loader) {
+    // 3D Anime Model ကို လှမ်းယူခြင်း (.glb)
+    loader.load('assets/anime_model.glb', (gltf) => {
+        const model = gltf.scene;
+        model.position.set(data.x, data.y, data.z);
+        model.scale.set(0.5, 0.5, 0.5);
+        scene.add(model);
+        otherPlayers[id] = model;
+
+        // Animation Mixer တည်ဆောက်ခြင်း
+        const mixer = new THREE.AnimationMixer(model);
+        mixers.push(mixer);
+    }, undefined, (err) => {
+        // ဖိုင်မရှိပါက ယာယီ Box ဖြင့် ကိုယ်စားပြုပြသခြင်း
+        const cube = new THREE.Mesh(new THREE.BoxGeometry(1, 2, 1), new THREE.MeshBasicMaterial({color: 0xff0000}));
+        cube.position.set(data.x, data.y, data.z);
+        scene.add(cube);
+        otherPlayers[id] = cube;
+    });
+}
+
+// Emoji နှိပ်လိုက်လျှင် Server သို့ လှမ်းပို့သည့် စနစ်
+function triggerEmoji(emojiName) {
+    socket.emit('playEmoji', { emoji: emojiName });
+    console.log(`You played emoji: ${emojiName}`);
+}
+
+const clock = new THREE.Clock();
+function animate() {
+    requestAnimationFrame(animate);
+    const delta = clock.getDelta();
+    mixers.forEach(mixer => mixer.update(delta));
+    if (renderer) renderer.render(scene, camera);
+}
