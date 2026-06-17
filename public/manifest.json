@@ -1,0 +1,22 @@
+{
+  "name": "Minecraft PWA",
+  "short_name": "MinecraftPWA",
+  "description": "Minecraft-like Android PWA Game",
+  "start_url": "/",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#1a1a2e",
+  "theme_color": "#1a1a2e",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' fill='%234a7c59'/><rect x='32' y='32' width='128' height='128' fill='%236b8e23'/><rect x='48' y='48' width='96' height='96' fill='%238b6914'/></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' fill='%234a7c59'/><rect x='85' y='85' width='342' height='342' fill='%236b8e23'/><rect x='128' y='128' width='256' height='256' fill='%238b6914'/></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}
